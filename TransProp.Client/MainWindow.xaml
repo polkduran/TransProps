@@ -1,0 +1,89 @@
+﻿<Window x:Class="TransProp.Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:TransProp.Client"
+        Closing="Window_Closing"  
+        WindowStartupLocation="CenterScreen"
+        Title="MainWindow" Height="500" Width="700">
+    <Window.Resources>
+        <DataTemplate x:Key="ValueTemplate">
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFocused, ElementName=transTextBox}" Value="True">
+                                <Setter Property="Background" Value="Bisque"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Key}" Grid.Column="0" Margin="5,0,0,0"/>
+                <TextBlock Text="{Binding ReferenceValue}" Grid.Column="1" TextTrimming="CharacterEllipsis" ToolTip="{Binding ReferenceValue}"  Margin="5,0,0,0"/>
+                <DockPanel Grid.Column="2" >
+                    <Button BorderThickness="0" BorderBrush="Transparent" Content="&gt;Copy" x:Name="copyButton" Click="CopyButton_Click" Margin="1"/>
+                    <TextBox x:Name="transTextBox" Text="{Binding NewValue,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" HorizontalAlignment="Stretch"
+                         AcceptsReturn="True" AcceptsTab="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  Margin="2"/>
+                </DockPanel>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="CommentTemplate">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Background="LightGray">
+                <TextBlock Text="{Binding Key}"/>
+                <TextBlock Text="{Binding ReferenceValue}"/>
+            </StackPanel>
+        </DataTemplate>
+        <local:ItemTemplateSelector x:Key="itemTemplateSelector" 
+                                                CommentTemplate="{StaticResource CommentTemplate}" 
+                                                ValueTemplate="{StaticResource ValueTemplate}"/>
+        <Style x:Key="buttonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="7,15"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <!--<Setter Property="VerticalAlignment" Value="Center"/>-->
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Button Style="{StaticResource buttonStyle}" Content="Load a Properties file..." x:Name="LoadRefFileButton" Click="loadReferenceFileButton_Click" />
+            <Button Style="{StaticResource buttonStyle}" Content="Load a translated file..." x:Name="LoadTransFileButton" Click="loadTransFileButton_Click" />
+            <Button Style="{StaticResource buttonStyle}" Content="Save translation" x:Name="SaveTranslationButton" Click="SaveTranslationButton_Click"/>
+        </StackPanel>
+        <TextBlock Grid.Row="1" x:Name="MessageText" VerticalAlignment="Center" Margin="3" Background="Orange" Foreground="White" Text="Select a .properties file" FontWeight="Bold" Padding="4"/>
+        <Grid Grid.Row="2" Background="LightBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Column="1">
+                <TextBlock Text="Search: " VerticalAlignment="Center"/>
+                <Button Content=" X " HorizontalAlignment="Right" Margin="2" Style="{StaticResource buttonStyle}" Padding="0" Click="clearReferenceSearch_Click"/>
+                <TextBox x:Name="searchReference" HorizontalAlignment="Stretch" KeyUp="searchReference_KeyUp" Margin="2,1,15,1"/>
+            </DockPanel>
+            <DockPanel Grid.Column="2">
+                <TextBlock Text="Search: " VerticalAlignment="Center"/>
+                <Button Content=" X " HorizontalAlignment="Right" Margin="2" Style="{StaticResource buttonStyle}" Padding="0" Click="clearTransSearch_Click"/>
+                <TextBox x:Name="searchTrans" HorizontalAlignment="Stretch" KeyUp="searchTrans_KeyUp"  Margin="2,1,15,1"/>
+            </DockPanel>
+        </Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="3">
+
+            <ItemsControl BorderBrush="DarkBlue" BorderThickness="2" x:Name="ListControl" ItemTemplateSelector="{StaticResource itemTemplateSelector}"/>
+
+        </ScrollViewer>
+    </Grid>
+</Window>
